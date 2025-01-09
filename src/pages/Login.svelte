@@ -2,6 +2,7 @@
     import { navigate } from "svelte-routing";
     import { toast, Toaster } from "svelte-french-toast";
     import { onMount } from "svelte";
+    import NavBar from "../components/NavBar.svelte";
 
     let showLoginForm = true;
     let email = "";
@@ -19,9 +20,9 @@
             credentials: "include",
         });
 
-        const result = await response.json();
         if (!response.ok) {
-            throw new Error("Login mislykkedes");
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || "Login mislykkedes");
         }
 
         setTimeout(() => {
@@ -49,8 +50,7 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({email, password}),
         });
-
-        const result = await response.json();
+        
         if (!response.ok) {
             if (response.status === 409) {
                 throw new Error("Emailen er allerede i brug");
@@ -93,14 +93,10 @@
 
 <Toaster/>
 <main>
-    <nav class="navbar">
-        <h2>
-            NotePal
-        </h2>
-    </nav>
+    <NavBar/>
     <div class="container">
         {#if showLoginForm}
-            <form on:submit|preventDefault={handleLoginToast} class="form">
+            <form  class="form" on:submit|preventDefault={handleLoginToast}>
                 <label for="email">Email</label>
                 <input type="email" bind:value={email} id="email" required placeholder="Email"/>
     
@@ -127,20 +123,6 @@
 
 
 <style>
-    .navbar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        background-color: lightgrey;
-        border-bottom: 2px solid black;
-        padding: 10px;
-        z-index: 1000;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
     .container {
         max-width: 365px;
         margin: auto;
@@ -166,22 +148,21 @@
     }
 
     .submit-button {
-        margin-top: 10px;
-        margin-bottom: 5px;
-        padding: 10px;
-        width: 100%;
-        border: none;
-        border-radius: 5px;
-        font-size: 16px;
-        font-weight: bold;
-        color: #fff;
-        background-color: #1877f2;;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #337ab7;
     }
 
     .submit-button:hover {
-        background-color: #166fe5;
+        background-color: #5a9bd6;
     }
-
     .toggle-button {
         padding: 10px;
         width: 70%;
@@ -190,11 +171,11 @@
         font-size: 16px;
         font-weight: bold;
         color: #fff;
-        background-color: #42b72a;;
+        background-color: #6b8e23;
         margin: auto;
     }
 
     .toggle-button:hover {
-        background-color: #36a420;
+        background-color: #8fbc39;
     }
 </style>
